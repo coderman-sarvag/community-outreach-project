@@ -19,6 +19,7 @@ export function automatedImage() {
       try {
         const res = await cloudinary.uploader.upload(path.join(ASSETS_DIR, 'automated-complaint.jpg'), {
           public_id: 'community-outreach/automated-complaint',
+          asset_folder: 'community-outreach',
           overwrite: false,
           resource_type: 'image',
         });

@@ -31,6 +31,7 @@ export async function uploadImage(buffer, mimetype) {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: 'community-outreach/complaints',
+          asset_folder: 'community-outreach/complaints', // Media Library folder on dynamic-folder accounts
           resource_type: 'image',
           transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto' }],
         },
