@@ -1,4 +1,4 @@
-# Community Outreach Project: Hostel Complaint System
+# Direct to Authority: Bhawan Complaint App (IIT Roorkee)
 
 Students, the Bhawan council and departments (Water Works, Sanitation, etc.) each get their own dashboard.
 Four ESP8266 sensors lodge complaints automatically. Photos go to Cloudinary. Everything updates live.

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
+import PortalHeader from '../components/PortalHeader.jsx';
+import PortalFooter from '../components/PortalFooter.jsx';
 
 const DEMO = [
   ['Student, Hostel A', 'student1.a@iitr.test'],
@@ -37,18 +39,29 @@ export default function Login() {
   };
 
   return (
-    <div className="login">
+    <>
+      <PortalHeader />
+      <div className="menubar menubar-plain"><div className="wrap menubar-inner"><span>Portal login</span></div></div>
+      <main className="wrap login">
       <section className="login-intro">
         <div className="login-stamp" aria-hidden="true">Resolved</div>
-        <h1>Report a hostel problem once. Follow it until it’s fixed.</h1>
+        <h1>Report a Bhawan problem once. Follow it until it’s fixed.</h1>
         <p>
           Sensors in the washrooms, water coolers and corridors file complaints on their own. Students and the
           Bhawan council can add photos and send issues straight to the right department.
         </p>
+        <section className="card panel">
+          <h2>Who uses this portal</h2>
+          <ul className="who">
+            <li><strong>Students</strong> lodge complaints, see sensor alerts from their Bhawan and contact the council.</li>
+            <li><strong>Bhawan council</strong> sees every complaint from the Bhawan and lodges issues for students.</li>
+            <li><strong>Departments</strong> receive complaints from all Bhawans and update them until resolved.</li>
+          </ul>
+        </section>
       </section>
 
-      <form className="card login-form" onSubmit={submit}>
-        <h2>Log in</h2>
+      <form className="card panel login-form" onSubmit={submit}>
+        <h2>Log in to the portal</h2>
         <label>
           Email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" />
@@ -74,6 +87,8 @@ export default function Login() {
           </ul>
         </details>
       </form>
-    </div>
+      </main>
+      <PortalFooter />
+    </>
   );
 }
