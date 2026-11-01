@@ -19,7 +19,7 @@ const char* WIFI_PASSWORD_2 = "FRIEND_HOTSPOT_PASSWORD";
 
 // Without deploying: http://<IP printed by the server>:5000/api/device/report
 // After deploying:   https://<your-app-name>.onrender.com/api/device/report
-const char* SERVER_URL = "http://192.168.1.100:5000/api/device/report";
+const char* SERVER_URL = "https://community-outreach-gtfh.onrender.com/api/device/report";
 
 const char* DEVICE_ID  = "HA-GEYSER-01";   // must match a device in the database (see npm run seed output)
 const char* DEVICE_KEY = "key-ha-geyser-01";
