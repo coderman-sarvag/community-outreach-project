@@ -1,0 +1,23 @@
+# Render blueprint: one web service runs the API, live updates and the built website.
+# Secrets are entered in the Render dashboard when the blueprint is created (sync: false).
+services:
+  - type: web
+    name: community-outreach
+    runtime: node
+    plan: free
+    buildCommand: npm run setup && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
