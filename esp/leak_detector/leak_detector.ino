@@ -26,9 +26,9 @@ const char* DEVICE_KEY = "key-ha-leak-01";
 const bool RELAY_ACTIVE_LOW = true;        // set false if your relay switches on with HIGH
 const unsigned long DRY_RESET_MS = 60000;  // must stay dry this long before a new leak can be reported
 
-#define RAIN_PIN   D5
-#define RELAY_PIN  D1
-#define BUZZER_PIN D2
+#define RAIN_PIN   14   // GPIO14 = pin D5 on a NodeMCU
+#define RELAY_PIN  5    // GPIO5  = pin D1 on a NodeMCU
+#define BUZZER_PIN 4    // GPIO4  = pin D2 on a NodeMCU
 
 bool leakActive = false;
 unsigned long lastWetTime = 0;

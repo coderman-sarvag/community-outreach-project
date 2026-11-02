@@ -25,7 +25,7 @@ const char* DEVICE_ID  = "HA-GEYSER-01";   // must match a device in the databas
 const char* DEVICE_KEY = "key-ha-geyser-01";
 // --------------------------------
 
-#define ONE_WIRE_PIN D5
+#define ONE_WIRE_PIN 14   // GPIO14 = pin D5 on a NodeMCU
 
 const float HOT_LIMIT_C = 35.0;            // below this the water counts as cold
 const unsigned long COLD_TIME_MS = 60000;  // 1 min for the demo; use 30 min (1800000) for real use

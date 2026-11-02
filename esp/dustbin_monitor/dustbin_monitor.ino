@@ -10,8 +10,8 @@
 
 
 // ---------- EDIT THESE ----------
-const char* WIFI_SSID_1     = "YOUR_HOTSPOT_NAME";
-const char* WIFI_PASSWORD_1 = "YOUR_HOTSPOT_PASSWORD";
+const char* WIFI_SSID_1     = "vivo Y400 5G";
+const char* WIFI_PASSWORD_1 = "12345678";
 const char* WIFI_SSID_2     = "FRIEND_HOTSPOT_NAME";
 const char* WIFI_PASSWORD_2 = "FRIEND_HOTSPOT_PASSWORD";
 
@@ -23,8 +23,8 @@ const char* DEVICE_ID  = "HA-BIN-01";   // must match a device in the database (
 const char* DEVICE_KEY = "key-ha-bin-01";
 // --------------------------------
 
-#define TRIG_PIN D5
-#define ECHO_PIN D6
+#define TRIG_PIN 14   // GPIO14 = pin D5 on a NodeMCU
+#define ECHO_PIN 12   // GPIO12 = pin D6 on a NodeMCU
 
 const float FULL_THRESHOLD_CM = 5.0;  // garbage closer than this to the sensor = full
 const float RESET_MARGIN_CM   = 3.0;  // must drop below threshold + margin to count as emptied

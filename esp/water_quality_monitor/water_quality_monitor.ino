@@ -10,8 +10,8 @@
 
 
 // ---------- EDIT THESE ----------
-const char* WIFI_SSID_1     = "YOUR_HOTSPOT_NAME";
-const char* WIFI_PASSWORD_1 = "YOUR_HOTSPOT_PASSWORD";
+const char* WIFI_SSID_1     = "vivo Y400 5G";
+const char* WIFI_PASSWORD_1 = "12345678";
 const char* WIFI_SSID_2     = "FRIEND_HOTSPOT_NAME";
 const char* WIFI_PASSWORD_2 = "FRIEND_HOTSPOT_PASSWORD";
 
@@ -29,9 +29,9 @@ const char* DEVICE_KEY = "key-ha-tds-01";
 #define WATER_TEMP 25.0     // assumed water temperature in C
 #define ZERO_OFFSET 0.028   // voltage read with probe in air (ADC offset)
 
-const float TDS_LIMIT_PPM  = 500;  // above this = alert
-const float TDS_RESET_PPM  = 450;  // must fall below this to re-arm
-const int   CONFIRM_READINGS = 5;  // consecutive readings needed
+const float TDS_LIMIT_PPM  = 100;  // above this = alert
+const float TDS_RESET_PPM  = 60;  // must fall below this to re-arm
+const int   CONFIRM_READINGS = 3;  // consecutive readings needed
 
 bool alertActive = false;
 int highCount = 0;
