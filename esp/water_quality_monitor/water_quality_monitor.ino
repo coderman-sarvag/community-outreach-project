@@ -85,7 +85,10 @@ bool sendReport(const String& reading) {
     Serial.printf("Report attempt %d: HTTP %d %s\n", attempt, code, reply.c_str());
 
     if (code == 200 || code == 201) return true;
-    if (code == 400 || code == 401) return false;  // wrong DEVICE_ID / DEVICE_KEY: fix the sketch
+    if (code == 400 || code == 401) {             // wrong DEVICE_ID / DEVICE_KEY: retrying won't help
+      Serial.println("Check DEVICE_ID and DEVICE_KEY in the sketch - report dropped");
+      return true;
+    }
     delay(3000);
   }
   return false;
@@ -128,6 +131,7 @@ void setup() {
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PASSWORD_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PASSWORD_2);
   connectWiFi();
+  Serial.println("Type t in the Serial Monitor to send a test report to the website");
 }
 
 void loop() {
@@ -135,6 +139,12 @@ void loop() {
   Serial.print("TDS: ");
   Serial.print(tds, 0);
   Serial.println(" ppm");
+
+  // Manual test: lodges (or updates) the complaint without needing dirty water
+  if (Serial.available() && Serial.read() == 't') {
+    Serial.println("Manual test - reporting");
+    queueReport(String(tds, 0) + " ppm (manual test)");
+  }
 
   if (tds > TDS_LIMIT_PPM) { highCount++; okCount = 0; }
   else if (tds < TDS_RESET_PPM) { okCount++; highCount = 0; }
