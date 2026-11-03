@@ -76,7 +76,7 @@ then open http://localhost:5173 (it reloads on every save).
 | Students, Hostel B | `student1.b@iitr.test` to `student5.b@iitr.test` |
 | Council, Hostel A | `warden.a`, `aswarden.a`, `supervisor.a`, `bhawansecy.a`, `techsecy.a`, `messsecy.a` (all `@iitr.test`) |
 | Council, Hostel B | same with `.b` |
-| Departments | `water`, `sanitation`, `fire`, `animal`, `mess`, `electrical`, `civil`, `it` (all `@iitr.test`) |
+| Departments | `water`, `sanitation`, `fire`, `animal`, `mess`, `electrical`, `civil`, `furniture`, `it` (all `@iitr.test`) |
 
 In Compass, connect to `mongodb://127.0.0.1:27017` and open the `community_outreach` database to see
 `users`, `hostels`, `authorities`, `devices` and `complaints`.
@@ -87,8 +87,9 @@ In Compass, connect to `mongodb://127.0.0.1:27017` and open the `community_outre
 |---|---|---|---|
 | Sees | Own complaints + sensor complaints of own hostel | Every complaint of own hostel, with student name, enrollment no., branch, room | Every complaint for that department, from all hostels |
 | Lodge complaints | Yes, with photo | Yes, with photo, for a student or the hostel | No |
-| Update status | No | No | Acknowledge, Start work, Mark resolved (with a note) |
+| Update status | No | No | Mark received, item available (send worker) or not available (request institute funds), items arrived, start work, mark resolved |
 | Home page extras | Council names and contacts | Sensor list with last report | Open / Resolved / All, hostel filter |
+| Stock list of items | No | No | Yes, own department only (+/- to update) |
 | "Resolved" popups | Yes | Yes | No |
 
 Popups: every resolved complaint pops up, one at a time. **Close** marks it seen and shows the next.

@@ -2,6 +2,8 @@ import { Router } from 'express';
 import Authority from '../models/Authority.js';
 import User from '../models/User.js';
 import Device from '../models/Device.js';
+import Item from '../models/Item.js';
+import mongoose from 'mongoose';
 import { requireAuth, requireRole } from '../middleware/auth.js';
 
 const router = Router();
@@ -44,6 +46,33 @@ router.get('/students', requireRole('council'), async (req, res, next) => {
         .sort('name')
         .lean()
     );
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Stock list: only the department itself sees and updates its items
+router.get('/items', requireRole('authority'), async (req, res, next) => {
+  try {
+    res.json(await Item.find({ authority: req.user.authority }).sort('name').lean());
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.patch('/items/:id', requireRole('authority'), async (req, res, next) => {
+  try {
+    const quantity = Math.max(0, Math.floor(Number(req.body.quantity)));
+    if (!mongoose.isValidObjectId(req.params.id) || !Number.isFinite(quantity)) {
+      return res.status(400).json({ message: 'Invalid item or quantity.' });
+    }
+    const item = await Item.findOneAndUpdate(
+      { _id: req.params.id, authority: req.user.authority },
+      { quantity },
+      { new: true }
+    ).lean();
+    if (!item) return res.status(404).json({ message: 'Item not found for your department.' });
+    res.json(item);
   } catch (e) {
     next(e);
   }

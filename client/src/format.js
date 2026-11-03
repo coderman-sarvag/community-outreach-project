@@ -1,8 +1,13 @@
-export const STATUS_ORDER = ['pending', 'acknowledged', 'in_progress', 'resolved'];
+export const STATUS_ORDER = [
+  'pending', 'acknowledged', 'awaiting_items', 'items_arrived', 'worker_assigned', 'in_progress', 'resolved',
+];
 
 export const STATUS_LABEL = {
   pending: 'Pending',
-  acknowledged: 'Acknowledged',
+  acknowledged: 'Received',
+  awaiting_items: 'Item awaited',
+  items_arrived: 'Item arrived',
+  worker_assigned: 'Worker assigned',
   in_progress: 'In progress',
   resolved: 'Resolved',
 };

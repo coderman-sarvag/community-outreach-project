@@ -9,20 +9,32 @@ import Authority from './models/Authority.js';
 import User from './models/User.js';
 import Device from './models/Device.js';
 import Complaint from './models/Complaint.js';
+import Item from './models/Item.js';
 import Counter, { nextComplaintNo } from './models/Counter.js';
 import { LOCAL_AUTOMATED_IMAGE } from './config/automatedImage.js';
 
 const PASSWORD = 'password123';
 
+// items: [name, unit, quantity in stock]; 0 means it has to come through institute funds
 const AUTHORITIES = [
-  { code: 'WATER', name: 'Water Works', description: 'Leakage, water supply, tanks, drinking water quality', officer: 'Ramesh Chauhan' },
-  { code: 'SANITATION', name: 'Sanitation', description: 'Garbage, dustbins, washroom cleaning, drainage', officer: 'Sunita Devi' },
-  { code: 'FIRE', name: 'Fire & Safety', description: 'Fire extinguishers, smoke, gas leaks, emergency exits', officer: 'Vikram Rana' },
-  { code: 'ANIMAL', name: 'Animal Control', description: 'Stray dogs, monkeys, snakes and other animals on premises', officer: 'Deepak Thapa' },
-  { code: 'MESS', name: 'Mess Services', description: 'Food quality, hygiene in kitchen and dining hall', officer: 'Harish Pant' },
-  { code: 'ELECTRICAL', name: 'Electrical Maintenance', description: 'Lights, fans, sockets, geysers, power supply', officer: 'Manoj Kumar' },
-  { code: 'CIVIL', name: 'Civil Maintenance', description: 'Doors, windows, furniture, walls, seepage', officer: 'Prakash Joshi' },
-  { code: 'IT', name: 'Network & IT', description: 'Wi-Fi and LAN connectivity in rooms and common areas', officer: 'Ankit Saxena' },
+  { code: 'WATER', name: 'Water Works', description: 'Leakage, water supply, tanks, drinking water quality', officer: 'Ramesh Chauhan', worker: 'Plumber',
+    items: [['Tap (brass)', 'pcs', 12], ['PVC pipe 1 inch', 'm', 40], ['Flush valve', 'pcs', 4], ['RO filter cartridge', 'pcs', 0], ['Washroom drain cover', 'pcs', 6], ['Water tank float valve', 'pcs', 2], ['Plumbing tape', 'rolls', 25]] },
+  { code: 'SANITATION', name: 'Sanitation', description: 'Garbage, dustbins, washroom cleaning, drainage', officer: 'Sunita Devi', worker: 'Sanitation worker',
+    items: [['Dustbin 60 L', 'pcs', 5], ['Garbage bags (large)', 'packs', 30], ['Phenyl', 'L', 20], ['Floor mop', 'pcs', 8], ['Toilet cleaner', 'bottles', 15], ['Drain cleaning rod', 'pcs', 0]] },
+  { code: 'FIRE', name: 'Fire & Safety', description: 'Fire extinguishers, smoke, gas leaks, emergency exits', officer: 'Vikram Rana', worker: 'Fire safety technician',
+    items: [['Fire extinguisher (ABC, 6 kg)', 'pcs', 6], ['Smoke detector', 'pcs', 0], ['Fire hose reel', 'pcs', 1], ['Emergency exit sign', 'pcs', 4], ['Extinguisher refill', 'pcs', 10], ['Fire blanket', 'pcs', 3]] },
+  { code: 'ANIMAL', name: 'Animal Control', description: 'Stray dogs, monkeys, snakes and other animals on premises', officer: 'Deepak Thapa', worker: 'Animal catcher team',
+    items: [['Dog catching net', 'pcs', 3], ['Monkey cage trap', 'pcs', 2], ['Snake tongs', 'pcs', 2], ['Animal transport crate', 'pcs', 0], ['Safety gloves', 'pairs', 10]] },
+  { code: 'MESS', name: 'Mess Services', description: 'Food quality, hygiene in kitchen and dining hall', officer: 'Harish Pant', worker: 'Mess staff',
+    items: [['Steel plates', 'pcs', 150], ['Water jug', 'pcs', 20], ['Gas burner', 'pcs', 0], ['Dining table cover', 'pcs', 30], ['Kitchen exhaust fan', 'pcs', 1], ['Water cooler tap', 'pcs', 6]] },
+  { code: 'ELECTRICAL', name: 'Electrical Maintenance', description: 'Lights, fans, sockets, geysers, power supply', officer: 'Manoj Kumar', worker: 'Electrician',
+    items: [['Ceiling fan (1200 mm)', 'pcs', 0], ['Fan capacitor', 'pcs', 20], ['Fan regulator', 'pcs', 8], ['LED tube light 20 W', 'pcs', 25], ['Switch board (6 module)', 'pcs', 5], ['Socket 16 A', 'pcs', 12], ['Geyser heating element', 'pcs', 0], ['MCB 32 A', 'pcs', 6]] },
+  { code: 'CIVIL', name: 'Civil Maintenance', description: 'Walls, ceilings, floors, plaster, seepage', officer: 'Prakash Joshi', worker: 'Mason',
+    items: [['Cement', 'bags', 15], ['Wall putty', 'kg', 40], ['Floor tiles', 'boxes', 0], ['Waterproofing compound', 'L', 10], ['White paint', 'L', 25], ['Ceiling plaster sheet', 'pcs', 4]] },
+  { code: 'FURNITURE', name: 'Furniture & Carpentry', description: 'Beds, tables, chairs, cupboards, doors, windows, latches', officer: 'Ramesh Saini', worker: 'Carpenter',
+    items: [['Study chair', 'pcs', 4], ['Study table', 'pcs', 0], ['Bed plank', 'pcs', 10], ['Cupboard lock', 'pcs', 15], ['Door hinge', 'pcs', 30], ['Window latch', 'pcs', 12], ['Mattress', 'pcs', 0], ['Door handle', 'pcs', 8]] },
+  { code: 'IT', name: 'Network & IT', description: 'Wi-Fi and LAN connectivity in rooms and common areas', officer: 'Ankit Saxena', worker: 'Network technician',
+    items: [['Wi-Fi access point', 'pcs', 2], ['LAN cable (Cat6)', 'm', 300], ['RJ45 connector', 'pcs', 200], ['Network switch (24 port)', 'pcs', 0], ['LAN wall socket', 'pcs', 20]] },
 ];
 
 const COUNCIL = {
@@ -79,6 +91,7 @@ async function run() {
     Device.deleteMany({}),
     Complaint.deleteMany({}),
     Counter.deleteMany({}),
+    Item.deleteMany({}),
   ]);
 
   const hash = await bcrypt.hash(PASSWORD, 10);
@@ -91,9 +104,13 @@ async function run() {
       code: a.code,
       name: a.name,
       description: a.description,
+      worker: a.worker,
       email,
       phone: phone(n++),
     });
+    await Item.insertMany(
+      a.items.map(([name, unit, quantity]) => ({ authority: authorities[a.code]._id, name, unit, quantity }))
+    );
     await User.create({
       name: a.officer,
       email,
@@ -152,7 +169,7 @@ async function run() {
   // A few sample complaints so every dashboard has something to show
   const ago = (h) => new Date(Date.now() - h * 3600 * 1000);
   const make = async (c) => {
-    const statusFlow = ['pending', 'acknowledged', 'in_progress', 'resolved'];
+    const statusFlow = c.flow || ['pending', 'acknowledged', 'worker_assigned', 'in_progress', 'resolved'];
     const steps = statusFlow.slice(0, statusFlow.indexOf(c.status) + 1);
     const officer = await User.findOne({ role: 'authority', authority: c.authority }).lean();
     const history = steps.map((s, i) => ({
@@ -161,9 +178,10 @@ async function run() {
       byName: i === 0 ? c.byName : officer.name,
       at: ago(c.hoursAgo - i),
     }));
+    const { flow, ...fields } = c;
     await Complaint.create({
       complaintNo: await nextComplaintNo(),
-      ...c,
+      ...fields,
       image: c.source === 'device' ? { url: LOCAL_AUTOMATED_IMAGE } : c.image,
       history,
       resolvedAt: c.status === 'resolved' ? ago(c.hoursAgo - steps.length + 1) : undefined,
@@ -176,13 +194,21 @@ async function run() {
     title: 'Fan not working', description: 'Ceiling fan stopped working, regulator also not responding.',
     location: 'Room A-101', authority: authorities.ELECTRICAL._id, hostel: hostels.A._id, source: 'student',
     lodgedBy: A.student1._id, student: A.student1._id, byName: A.student1.name, status: 'resolved', hoursAgo: 30,
-    notes: { acknowledged: 'Electrician assigned', in_progress: 'Replacing capacitor', resolved: 'Capacitor replaced, fan working' },
+    item: 'Fan capacitor',
+    notes: { acknowledged: 'Complaint received', worker_assigned: 'Electrician will visit (Fan capacitor taken from stock)', in_progress: 'Replacing capacitor', resolved: 'Capacitor replaced, fan working' },
+  });
+  await make({
+    title: 'Ceiling fan burnt out', description: 'Fan motor smells burnt and does not start at all.',
+    location: 'Room A-210', authority: authorities.ELECTRICAL._id, hostel: hostels.A._id, source: 'student',
+    lodgedBy: A.student3._id, student: A.student3._id, byName: A.student3.name, status: 'awaiting_items', hoursAgo: 20,
+    flow: ['pending', 'acknowledged', 'awaiting_items'], item: 'Ceiling fan (1200 mm)',
+    notes: { acknowledged: 'Complaint received', awaiting_items: 'Ceiling fan (1200 mm) not in stock. Approval requested from institute funds.' },
   });
   await make({
     title: 'Garbage spilling near staircase', description: 'Bin near the first floor staircase is overflowing.',
     location: 'First floor staircase', authority: authorities.SANITATION._id, hostel: hostels.A._id, source: 'student',
     lodgedBy: A.student2._id, student: A.student2._id, byName: A.student2.name, status: 'in_progress', hoursAgo: 6,
-    notes: { acknowledged: 'Noted', in_progress: 'Cleaning staff on the way' },
+    notes: { acknowledged: 'Complaint received', worker_assigned: 'Sanitation worker will visit', in_progress: 'Cleaning staff on the way' },
   });
   await make({
     title: 'Dinner quality complaint', description: 'Rice was undercooked at dinner for the last two days.',
@@ -203,9 +229,9 @@ async function run() {
   });
   await make({
     title: 'Broken window latch', description: 'Window latch broken, window cannot be closed at night.',
-    location: 'Room B-305', authority: authorities.CIVIL._id, hostel: hostels.B._id, source: 'council',
+    location: 'Room B-305', authority: authorities.FURNITURE._id, hostel: hostels.B._id, source: 'council',
     lodgedBy: B.bhawansecy._id, student: B.student5._id, byName: B.bhawansecy.name, status: 'acknowledged', hoursAgo: 8,
-    notes: { acknowledged: 'Carpenter scheduled for tomorrow' },
+    notes: { acknowledged: 'Complaint received' },
   });
   await make({
     title: 'Dustbin full', description: 'Dustbin at Corridor dustbin, First floor is full (garbage 4.2 cm below the lid).',

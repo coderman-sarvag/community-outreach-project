@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 
-export const STATUSES = ['pending', 'acknowledged', 'in_progress', 'resolved'];
+// awaiting_items / items_arrived happen only when the needed item is not in the department's stock
+export const STATUSES = [
+  'pending', 'acknowledged', 'awaiting_items', 'items_arrived', 'worker_assigned', 'in_progress', 'resolved',
+];
 
 const historySchema = new mongoose.Schema(
   {
@@ -34,6 +37,8 @@ const complaintSchema = new mongoose.Schema(
     lastTriggeredAt: Date,
 
     image: { url: String, publicId: String },
+
+    item: String, // item needed for the repair (from stock, or awaited from institute funds)
 
     priority: { type: String, enum: ['normal', 'high'], default: 'normal' },
     status: { type: String, enum: STATUSES, default: 'pending' },

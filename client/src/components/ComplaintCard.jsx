@@ -46,7 +46,7 @@ export default function ComplaintCard({ c, viewerRole, children }) {
         </a>
       )}
 
-      <StatusTrack status={c.status} />
+      <StatusTrack c={c} showItem={viewerRole !== 'student'} />
 
       {c.history?.length > 1 && (
         <details className="history">

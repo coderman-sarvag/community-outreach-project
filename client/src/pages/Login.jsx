@@ -12,6 +12,7 @@ const DEMO = [
   ['Water Works', 'water@iitr.test'],
   ['Sanitation', 'sanitation@iitr.test'],
   ['Electrical Maintenance', 'electrical@iitr.test'],
+  ['Furniture & Carpentry', 'furniture@iitr.test'],
 ];
 
 export default function Login() {

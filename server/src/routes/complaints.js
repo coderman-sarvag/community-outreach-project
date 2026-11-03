@@ -3,6 +3,7 @@ import multer from 'multer';
 import mongoose from 'mongoose';
 import Complaint, { STATUSES } from '../models/Complaint.js';
 import Authority from '../models/Authority.js';
+import Item from '../models/Item.js';
 import User from '../models/User.js';
 import { nextComplaintNo } from '../models/Counter.js';
 import { requireAuth, requireRole } from '../middleware/auth.js';
@@ -123,12 +124,15 @@ router.post('/', requireRole('student', 'council'), upload.single('image'), asyn
   }
 });
 
-// Authority moves a complaint forward: pending -> acknowledged -> in_progress -> resolved
+// Authority moves a complaint forward:
+// pending -> acknowledged -> [awaiting_items -> items_arrived] -> worker_assigned -> in_progress -> resolved
+// The bracketed steps happen only when the needed item is not in stock.
 router.patch('/:id/status', requireRole('authority'), async (req, res, next) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) return bad(res, 'Invalid complaint.');
     const { status } = req.body;
     const note = String(req.body.note || '').trim().slice(0, 500);
+    const item = String(req.body.item || '').trim().slice(0, 120);
     if (!STATUSES.includes(status)) return bad(res, 'Unknown status.');
 
     const complaint = await Complaint.findOne({ _id: req.params.id, authority: req.user.authority });
@@ -136,9 +140,37 @@ router.patch('/:id/status', requireRole('authority'), async (req, res, next) => 
     if (STATUSES.indexOf(status) <= STATUSES.indexOf(complaint.status)) {
       return bad(res, `This complaint is already ${complaint.status.replace('_', ' ')}.`);
     }
+    if (complaint.status === 'awaiting_items' && status !== 'items_arrived') {
+      return bad(res, 'Mark the item as arrived first.');
+    }
+    if (status === 'items_arrived' && complaint.status !== 'awaiting_items') {
+      return bad(res, 'No item is being awaited for this complaint.');
+    }
+
+    const { worker = 'Worker' } = (await Authority.findById(req.user.authority).lean()) || {};
+    let auto = '';
+    if (status === 'acknowledged') auto = 'Complaint received';
+    if (status === 'awaiting_items') {
+      if (!item) return bad(res, 'Choose the item that is not available.');
+      complaint.item = item;
+      auto = `${item} not in stock. Approval requested from institute funds.`;
+    }
+    if (status === 'items_arrived') auto = `${complaint.item} received`;
+    if (status === 'worker_assigned') {
+      auto = `${worker} will visit`;
+      if (complaint.status === 'acknowledged' && item) {
+        const taken = await Item.findOneAndUpdate(
+          { authority: req.user.authority, name: item, quantity: { $gt: 0 } },
+          { $inc: { quantity: -1 } }
+        );
+        if (!taken) return bad(res, `${item} is out of stock. Mark it as not available instead.`);
+        complaint.item = item;
+        auto += ` (${item} taken from stock)`;
+      }
+    }
 
     complaint.status = status;
-    complaint.history.push({ status, note, byName: req.user.name });
+    complaint.history.push({ status, note: [auto, note].filter(Boolean).join('. '), byName: req.user.name });
     if (status === 'resolved') {
       complaint.resolvedAt = new Date();
       complaint.seenBy = [];

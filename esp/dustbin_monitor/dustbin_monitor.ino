@@ -26,7 +26,7 @@ const char* DEVICE_KEY = "key-ha-bin-01";
 #define TRIG_PIN 14   // GPIO14 = pin D5 on a NodeMCU
 #define ECHO_PIN 12   // GPIO12 = pin D6 on a NodeMCU
 
-const float FULL_THRESHOLD_CM = 5.0;  // garbage closer than this to the sensor = full
+const float FULL_THRESHOLD_CM = 10.0;  // garbage closer than this to the sensor = full
 const float RESET_MARGIN_CM   = 3.0;  // must drop below threshold + margin to count as emptied
 const int   CONFIRM_READINGS  = 3;    // consecutive readings needed (ignores a hand or a falling bag)
 

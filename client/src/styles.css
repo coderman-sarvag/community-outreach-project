@@ -16,6 +16,9 @@
   --panel-head: #f2f4f8;
   --pending: #b5541c;
   --acknowledged: #5b3fa8;
+  --awaiting_items: #a1281f;
+  --items_arrived: #8a6d12;
+  --worker_assigned: #0f7a85;
   --in_progress: #1f5fbf;
   --resolved: #1e7b4a;
   --danger: #b42318;
@@ -160,6 +163,9 @@ label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
 
 .fill-pending { background: var(--pending); }
 .fill-acknowledged { background: var(--acknowledged); }
+.fill-awaiting_items { background: var(--awaiting_items); }
+.fill-items_arrived { background: var(--items_arrived); }
+.fill-worker_assigned { background: var(--worker_assigned); }
 .fill-in_progress { background: var(--in_progress); }
 .fill-resolved { background: var(--resolved); }
 
@@ -214,6 +220,9 @@ label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
 }
 .st-pending { color: var(--pending); }
 .st-acknowledged { color: var(--acknowledged); }
+.st-awaiting_items { color: var(--awaiting_items); }
+.st-items_arrived { color: var(--items_arrived); }
+.st-worker_assigned { color: var(--worker_assigned); }
 .st-in_progress { color: var(--in_progress); }
 .st-resolved { color: var(--resolved); }
 @keyframes stamp { from { transform: rotate(-6deg) scale(1.6); opacity: 0; } }
@@ -235,11 +244,25 @@ label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
 
 .track-bar { height: 6px; background: var(--rule); border-radius: 1px; overflow: hidden; }
 .track-fill { height: 100%; min-width: 6px; transition: width 0.5s ease; }
-.track-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); padding: 0; margin: 0.4rem 0 0; font-size: 0.8rem; color: var(--muted); }
-.track-steps li:nth-child(2), .track-steps li:nth-child(3) { text-align: center; }
+.track-steps { list-style: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem; padding: 0; margin: 0.4rem 0 0; font-size: 0.78rem; line-height: 1.25; color: var(--muted); }
+.track-steps li { text-align: center; }
+.track-steps li:first-child { text-align: left; }
 .track-steps li:last-child { text-align: right; }
 .track-steps .done { color: var(--ink); }
 .track-steps .current { color: var(--ink); font-weight: 700; }
+.track-steps .blocked, .track-detail.blocked { color: var(--awaiting_items); }
+.track-detail { margin: 0.45rem 0 0; font-size: 0.86rem; font-weight: 600; color: var(--ink); }
+
+/* Department stock list */
+.stock { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+.stock li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; font-size: 0.9rem; padding-bottom: 0.55rem; border-bottom: 1px dashed var(--rule); }
+.stock li:last-child { border-bottom: 0; padding-bottom: 0; }
+.stock li > span:first-child { display: grid; }
+.stock small { color: var(--muted); }
+.stock li.out small { color: var(--awaiting_items); font-weight: 700; }
+.stock-btns { display: flex; gap: 0.3rem; flex: none; }
+.stock-btns .btn { min-width: 34px; padding: 0; }
+.actions select { flex: 1 1 220px; width: auto; }
 
 .history summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; color: var(--muted); }
 .history ol { margin: 0.5rem 0 0; padding-left: 1.2rem; display: grid; gap: 0.35rem; font-size: 0.9rem; }
@@ -342,6 +365,6 @@ label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
   .ticket::before { left: 1.15rem; }
   .ticket-head { padding-right: 0; padding-top: 1.9rem; }
   .status { font-size: 0.8rem; top: 0.7rem; }
-  .track-steps { font-size: 0.72rem; }
+  .track-steps { font-size: 0.68rem; gap: 0.2rem; }
   .popup h2 { padding-right: 0; padding-top: 1.8rem; }
 }

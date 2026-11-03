@@ -19,7 +19,7 @@ export function scopeFilter(user) {
 export const POPULATE = [
   { path: 'student', select: 'name email phone enrollmentNo branch roomNo' },
   { path: 'lodgedBy', select: 'name role designation' },
-  { path: 'authority', select: 'name code email phone' },
+  { path: 'authority', select: 'name code email phone worker' },
   { path: 'hostel', select: 'name code' },
   { path: 'device', select: 'deviceId location sensorType lastSeen' },
 ];

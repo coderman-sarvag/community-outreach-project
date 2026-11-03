@@ -5,3 +5,4 @@ import './User.js';
 import './Device.js';
 import './Counter.js';
 import './Complaint.js';
+import './Item.js';
